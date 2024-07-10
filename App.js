@@ -1,20 +1,62 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { useContext } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import HomeScreen from './app/screens/home';
+import HotspotsScreen from './app/screens/map';
+import ListScreen from './app/screens/hotspotsList';
+import SettingsScreen from './app/screens/settings';
+import { ThemeProvider, ThemeContext } from './app/themeContext';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const Stack = createNativeStackNavigator();
+
+function AppContent() {
+    const { isDarkMode } = useContext(ThemeContext);
+
+    // Header styling
+    const headerStyle = {
+        headerStyle: {
+            backgroundColor: isDarkMode ? '#000' : '#fff',
+        },
+        headerTintColor: isDarkMode ? '#fff' : '#000',
+        headerTitleAlign: 'center',
+    };
+
+    return (
+        <View style={{flex: 1}}>
+            {/*De header styling wordt bij elke screen toegepast*/}
+            <Stack.Navigator initialRouteName="Home" screenOptions={headerStyle}>
+                <Stack.Screen
+                    name="Home"
+                    component={HomeScreen}
+                />
+                <Stack.Screen
+                    name="Map"
+                    component={HotspotsScreen}
+                />
+                <Stack.Screen
+                    name="List of Hotspots"
+                    component={ListScreen}
+                />
+                <Stack.Screen
+                    name="Settings"
+                    component={SettingsScreen}
+                />
+            </Stack.Navigator>
+        </View>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function App() {
+    return (
+        <ThemeProvider>
+            <NavigationContainer>
+                <AppContent />
+            </NavigationContainer>
+        </ThemeProvider>
+    );
+}
+
+export default App;
